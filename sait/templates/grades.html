@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block title %}Оценки{% endblock %}
+
+{% block content %}
+<h2>Ведомость: {{ vedomost.title }}</h2>
+<p><strong>Группа:</strong> {{ vedomost.group_name }}</p>
+<p><strong>Семестр:</strong> {{ vedomost.semester }}</p>
+<p><strong>Учебный год:</strong> {{ vedomost.academic_year }}</p>
+<p><strong>Загрузил:</strong> {{ vedomost.uploaded_by.userprofile.last_name }} {{ vedomost.uploaded_by.userprofile.first_name|slice:":1" }}.{{ vedomost.uploaded_by.userprofile.middle_name|slice:":1" }}.</p>
+
+<table border="1">
+    <tr>
+        <th>Студент</th>
+        <th>Предмет</th>
+        <th>Оценка</th>
+        <th>Преподаватель</th>
+    </tr>
+    {% for item in grades %}
+    <tr>
+        <td>{{ item.student.full_name }}</td>
+        <td>{{ item.subject.name }}</td>
+        <td>{{ item.value }}</td>
+        <td>
+            {% if item.teacher %}
+                {{ item.teacher.last_name }} {{ item.teacher.first_name|slice:":1" }}.{{ item.teacher.middle_name|slice:":1" }}.
+            {% else %}
+                <em>Не назначен</em>
+            {% endif %}
+        </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="4">Нет данных</td></tr>
+    {% endfor %}
+</table>
+<a href="{% url 'vedomosti_list' %}" class="btn">Назад к списку</a>
+{% endblock %}
+
+

@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block extra_class %}wide-box{% endblock %}
+{% block content %}
+<div class="vedomosti-page">
+  <h2>Список ведомостей</h2>
+
+  <form method="get" class="filter-form">
+    <label for="id_group">Группа:</label>
+    {{ form.group }}
+
+    <label for="id_academic_year">Учебный год:</label>
+    {{ form.academic_year }}
+
+    <label for="id_uploaded_by">Преподаватель:</label>
+    {{ form.uploaded_by }}
+    <div class="button-group">
+      <button type="submit">Применить фильтр</button>
+      <a href="{% url 'vedomosti_list' %} "  class="btn">Сбросить</a>
+    </div>
+  </form>
+
+  <div class="scroll-table">
+    <table>
+      <tr>
+        <th>Название</th>
+        <th>Группа</th>
+        <th>Семестр</th>
+        <th>Учебный год</th>
+        <th>Дата загрузки</th>
+        <th>Преподаватель</th>
+        <th>Студенты</th>
+        <th>Оценки</th>
+        <th>Действия</th>
+      </tr>
+      {% for item in vedomosti_data %}
+      <tr>
+        <td>{{ item.ved.title }}</td>
+        <td>{{ item.ved.group_name }}</td>
+        <td>{{ item.ved.get_semester_display }}</td>
+        <td>{{ item.ved.academic_year }}</td>
+        <td>{{ item.ved.upload_date|date:"d.m.Y H:i" }}</td>
+        <td>{{ item.ved.uploaded_by.userprofile.last_name }}</td>
+        <td>{{ item.student_count }}</td>
+        <td>{{ item.grade_count }}</td>
+        <td>
+          <a href="{% url 'grades' item.ved.id %}">Открыть</a> |
+          <a href="{% url 'delete_vedomost' item.ved.id %}">Удалить</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="9">Ведомостей не найдено по выбранным фильтрам.</td></tr>
+      {% endfor %}
+    </table>
+  </div>
+</div>
+{% endblock %}

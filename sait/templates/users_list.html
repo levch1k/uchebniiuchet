@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Преподаватели</h2>
+
+<table border="1">
+  <tr>
+    <th>ФИО</th>
+    <th>Логин</th>
+    <th>Email</th>
+    <th>Роль</th>
+    <th>Действия</th>
+  </tr>
+  {% for u in users %}
+    {% if u.get_role_display == 'Завуч' %}
+    {% else %}
+  <tr>
+    <td>{{ u.last_name }} {{ u.first_name }} {{ u.middle_name }}</td>
+    <td>{{ u.user.username }}</td>
+    <td>{{ u.user.email }}</td>
+    <td>{{ u.get_role_display }}</td>
+    <td>
+      <a href="{% url 'edit_user' u.user.id %}">Изменить</a> |
+      <a href="{% url 'delete_user' u.user.id %}">Удалить</a>
+    </td>
+  </tr>
+    {% endif %}
+  {% endfor %}
+</table>
+{% endblock %}

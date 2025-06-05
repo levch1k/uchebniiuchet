@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}Цвета для распределения преподавателей{% endblock %}
+
+{% block content %}
+<h2>Цвета для ведомости с назначением преподавателей</h2>
+<form method="post">
+    {% csrf_token %}
+
+    <label>Цвет дисциплины:
+        <input type="color" name="ta_subject_color" id="subjectColor" value="{{ color_profile.ta_subject_color }}">
+        <input type="text" name="ta_subject_color_text" id="subjectHex" value="{{ color_profile.ta_subject_color }}">
+    </label><br><br>
+
+    <label>Цвет группы:
+        <input type="color" name="ta_group_color" id="groupColor" value="{{ color_profile.ta_group_color }}">
+        <input type="text" name="ta_group_color_text" id="groupHex" value="{{ color_profile.ta_group_color }}">
+    </label><br><br>
+
+    <label>Цвет преподавателя (Фамилия И.О.):
+        <input type="color" name="ta_teacher_color" id="teacherColor" value="{{ color_profile.ta_teacher_color }}">
+        <input type="text" name="ta_teacher_color_text" id="teacherHex" value="{{ color_profile.ta_teacher_color }}">
+    </label><br><br>
+    <div class="button-group"><button type="submit">Сохранить</button></div>
+
+</form>
+
+<script>
+function bindColorSync(colorId, hexId) {
+    const colorInput = document.getElementById(colorId);
+    const hexInput = document.getElementById(hexId);
+
+    colorInput.addEventListener('input', e => {
+        hexInput.value = e.target.value.toUpperCase();
+    });
+
+    hexInput.addEventListener('input', e => {
+        const val = e.target.value;
+        if (/^#[0-9A-Fa-f]{6}$/.test(val)) {
+            colorInput.value = val;
+        }
+    });
+}
+
+bindColorSync('subjectColor', 'subjectHex');
+bindColorSync('groupColor', 'groupHex');
+bindColorSync('teacherColor', 'teacherHex');
+</script>
+{% endblock %}

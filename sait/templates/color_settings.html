@@ -1,0 +1,70 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Настройки цвета{% endblock %}
+
+{% block content %}
+<h2>Настройки цвета</h2>
+<form method="post">
+  {% csrf_token %}
+
+  {% if error %}
+  <div class="alert alert-danger">{{ error }}</div>
+  {% endif %}
+
+  <label>Цвет студентов:
+      <input type="color" name="student_color" id="studentColor" value="{{ color_profile.student_color }}">
+      <input type="text" name="student_color_text" id="studentHex" value="{{ color_profile.student_color }}">
+  </label><br>
+
+  <label>Цвет дисциплин:
+      <input type="color" name="subject_color" id="subjectColor" value="{{ color_profile.subject_color }}">
+      <input type="text" name="subject_color_text" id="subjectHex" value="{{ color_profile.subject_color }}">
+  </label><br>
+
+  <label>Цвет оценок:
+      <input type="color" name="grade_color" id="gradeColor" value="{{ color_profile.grade_color }}">
+      <input type="text" name="grade_color_text" id="gradeHex" value="{{ color_profile.grade_color }}">
+  </label><br>
+
+  <label>Цвет группы:
+      <input type="color" name="group_color" id="groupColor" value="{{ color_profile.group_color }}">
+      <input type="text" name="group_color_text" id="groupHex" value="{{ color_profile.group_color }}">
+  </label><br>
+
+  <label>Цвет периода:
+      <input type="color" name="period_color" id="periodColor" value="{{ color_profile.period_color }}">
+      <input type="text" name="period_color_text" id="periodHex" value="{{ color_profile.period_color }}">
+  </label><br><br>
+    <div class="button-group"><button type="submit">Сохранить</button></div>
+
+</form>
+
+<script>
+document.querySelectorAll('input[type="color"]').forEach(input => {
+    input.addEventListener('input', function(e) {
+        const hex = e.target.value.toUpperCase();
+        if (/^#[0-9A-F]{6}$/i.test(hex)) {
+            e.target.value = hex;
+        } else {
+            alert('Некорректный цвет!');
+        }
+    });
+});
+document.getElementById('studentColor').addEventListener('input', function(e) {
+    document.getElementById('studentHex').value = e.target.value.toUpperCase();
+});
+document.getElementById('subjectColor').addEventListener('input', function(e) {
+    document.getElementById('subjectHex').value = e.target.value.toUpperCase();
+});
+document.getElementById('gradeColor').addEventListener('input', function(e) {
+    document.getElementById('gradeHex').value = e.target.value.toUpperCase();
+});
+document.getElementById('groupColor').addEventListener('input', function(e) {
+    document.getElementById('groupHex').value = e.target.value.toUpperCase();
+});
+document.getElementById('periodColor').addEventListener('input', function(e) {
+    document.getElementById('periodHex').value = e.target.value.toUpperCase();
+});
+</script>
+{% endblock %}

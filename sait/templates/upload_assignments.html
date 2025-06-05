@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+
+{% block title %}Загрузка назначения преподавателей{% endblock %}
+
+{% block content %}
+<h2>Загрузка ведомостей с назначениями</h2>
+
+{% if messages %}
+  <div class="messages">
+    {% for message in messages %}
+      <div class="{{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+  </div>
+{% endif %}
+
+<form method="post" enctype="multipart/form-data" class="upload-form">
+    {% csrf_token %}
+    <div class="dropzone-wrapper">
+      <input type="file" id="fileInput" name="file" hidden accept=".xlsx,.xls">
+      <div class="dropzone" id="dropzone">
+        <p>Перетащите файл сюда или <span id="fileTrigger">нажмите</span></p>
+        <p id="file-name-display" class="file-name">Файл не выбран</p>
+      </div>
+    </div>
+
+    <div class="button-group">
+      <button type="submit" id="uploadBtn" disabled>Загрузить</button>
+    </div>
+</form>
+
+
+<h3>Загруженные ведомости</h3>
+<div class="scroll-table">
+  <table>
+    <tr>
+      <th>Название файла</th>
+      <th>Загрузил</th>
+      <th>Дата загрузки</th>
+      <th>Количество назначений</th>
+      <th>Действия</th>
+    </tr>
+    {% for item in assignments_data %}
+    <tr>
+      <td>{{ item.assignment.file.name|slice:"rindex('/') + 1:" }}</td>
+      <td>{{ item.assignment.uploaded_by.userprofile.last_name }} {{ item.assignment.uploaded_by.userprofile.first_name|slice:":1" }}.{{ item.assignment.uploaded_by.userprofile.middle_name|slice:":1" }}.</td>
+      <td>{{ item.assignment.upload_date|date:"d.m.Y H:i" }}</td>
+      <td>{{ item.teacher_count }}</td>
+      <td>
+        <a href="{% url 'delete_teacher_assignment' item.assignment.id %}">Удалить</a>
+      </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="5">Ведомостей с данными не найдено.</td></tr>
+    {% endfor %}
+  </table>
+</div>
+
+
+<script>
+const dropzone = document.getElementById('dropzone');
+const fileInput = document.getElementById('fileInput');
+const fileTrigger = document.getElementById('fileTrigger');
+const fileNameDisplay = document.getElementById('file-name-display');
+
+// Клик по "нажмите"
+fileTrigger.addEventListener('click', (e) => {
+  e.stopPropagation();
+  fileInput.click();
+});
+
+// Drag & drop
+dropzone.addEventListener('dragover', (e) => {
+  e.preventDefault();
+  dropzone.classList.add('dragover');
+});
+
+dropzone.addEventListener('dragleave', () => {
+  dropzone.classList.remove('dragover');
+});
+
+dropzone.addEventListener('drop', (e) => {
+  e.preventDefault();
+  dropzone.classList.remove('dragover');
+  fileInput.files = e.dataTransfer.files;
+  updateFileName();
+});
+
+fileInput.addEventListener('change', updateFileName);
+
+function updateFileName() {
+  const file = fileInput.files[0];
+  if (file) {
+    fileNameDisplay.textContent = file.name;
+    uploadBtn.disabled = false;
+  } else {
+    fileNameDisplay.textContent = 'Файл не выбран';
+    uploadBtn.disabled = true;
+  }
+}
+</script>
+
+{% endblock %}

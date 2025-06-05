@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Генерация отчёта</h2>
+
+<form method="post" id="report-form">
+  {% csrf_token %}
+
+  <label for="id_report_type">Тип отчёта:</label>
+  {{ form.report_type }}
+
+  <div id="group-fields" style="margin-top: 10px;">
+    <label for="id_group">Группа:</label>
+    {{ form.group }}
+  </div>
+
+  <div id="student-fields" style="margin-top: 10px; display: none;">
+    <label for="id_student">Студент:</label>
+    {{ form.student }}
+  </div>
+
+  <div id="teacher-fields" style="margin-top: 10px; display: none;">
+    <label for="id_teacher">Преподаватель:</label>
+    {{ form.teacher }}
+  </div>
+
+  <div style="margin-top: 10px;">
+    <label for="id_from_year">С учебного года:</label>
+    {{ form.from_year }}
+
+    <label for="id_to_year">По учебный год:</label>
+    {{ form.to_year }}
+  </div>
+  <div class="button-group"><button type="submit" style="margin-top: 10px;">Сформировать отчёт</button></div>
+
+
+  {% if form.non_field_errors %}
+    <div style="color: red; margin-top: 10px;">
+      {% for error in form.non_field_errors %}
+        {{ error }}<br>
+      {% endfor %}
+    </div>
+  {% endif %}
+</form>
+
+<script>
+const reportTypeSelect = document.getElementById("id_report_type");
+const groupFields = document.getElementById("group-fields");
+const studentFields = document.getElementById("student-fields");
+const teacherFields = document.getElementById("teacher-fields");
+
+function toggleFields() {
+  const type = reportTypeSelect.value;
+
+  groupFields.style.display = (type === "group") ? "block" : "none";
+  studentFields.style.display = (type === "student") ? "block" : "none";
+  teacherFields.style.display = (type === "teacher") ? "block" : "none";
+}
+
+reportTypeSelect.addEventListener("change", toggleFields);
+document.addEventListener("DOMContentLoaded", toggleFields);
+
+// Автозагрузка годов
+function updateYearsBy(type, value) {
+  let param = "";
+  if (type === "group") param = `group=${value}`;
+  else if (type === "student") param = `student=${value}`;
+  else if (type === "teacher") param = `teacher=${value}`;
+
+  if (!param) return;
+
+  fetch(`/ajax/get-years-by-entity/?${param}`)
+    .then(response => response.json())
+    .then(data => {
+      const fromYear = document.getElementById("id_from_year");
+      const toYear = document.getElementById("id_to_year");
+
+      fromYear.innerHTML = "";
+      toYear.innerHTML = "";
+
+      if (!data.years || data.years.length === 0) return;
+
+      for (const year of data.years) {
+        const opt1 = new Option(year, year);
+        const opt2 = new Option(year, year);
+        fromYear.add(opt1);
+        toYear.add(opt2);
+      }
+
+      fromYear.value = data.years[0];
+      toYear.value = data.years[data.years.length - 1];
+    });
+}
+
+document.getElementById("id_group").addEventListener("change", function () {
+  if (reportTypeSelect.value === "group") {
+    updateYearsBy("group", this.value);
+  }
+});
+
+document.getElementById("id_student").addEventListener("change", function () {
+  if (reportTypeSelect.value === "student") {
+    updateYearsBy("student", this.value);
+  }
+});
+
+document.getElementById("id_teacher").addEventListener("change", function () {
+  if (reportTypeSelect.value === "teacher") {
+    updateYearsBy("teacher", this.value);
+  }
+});
+</script>
+{% endblock %}

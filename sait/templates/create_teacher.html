@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}Создание преподавателя{% endblock %}
+
+{% block content %}
+<h2>Создание нового преподавателя</h2>
+{% if messages %}
+  <div class="messages">
+    {% for message in messages %}
+      <div class="{{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+  </div>
+{% endif %}
+<form method="post">
+    {% csrf_token %}
+    <label>{{ form.username.label_tag }} {{ form.username }}</label><br>
+    <label>{{ form.password.label_tag }} {{ form.password }}</label><br>
+    <label>{{ form.last_name.label_tag }} {{ form.last_name }}</label><br>
+    <label>{{ form.first_name.label_tag }} {{ form.first_name }}</label><br>
+    <label>{{ form.middle_name.label_tag }} {{ form.middle_name }}</label><br>
+    <label>{{ form.email.label_tag }} {{ form.email }}</label><br>
+    <div class="button-group"><button type="submit" >Создать</button></div>
+
+</form>
+
+{% endblock %}

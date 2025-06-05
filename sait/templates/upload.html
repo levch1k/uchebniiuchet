@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}Загрузка ведомости{% endblock %}
+
+{% block content %}
+<h2>Загрузить ведомость</h2>
+{% if messages %}
+  <div class="messages">
+    {% for message in messages %}
+      <div class="alert {{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+  </div>
+{% endif %}
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+
+  <div class="dropzone-wrapper">
+    {{ form.file }}
+    <div class="dropzone" onclick="document.getElementById('id_file').click();">
+      <p>Перетащите файл сюда или <span>нажмите</span></p>
+      <p id="file-name">Файл не выбран</p>
+    </div>
+  </div>
+
+  <div class="button-group">
+    <button type="submit">Загрузить</button>
+  </div>
+</form>
+<script>
+const dropzone = document.querySelector('.dropzone');
+const fileInput = document.getElementById('id_file');
+const fileNameDisplay = document.getElementById('file-name');
+
+// Отображение имени файла
+fileInput.addEventListener('change', () => {
+    const file = fileInput.files[0];
+    fileNameDisplay.textContent = file ? file.name : 'Файл не выбран';
+});
+
+// Drag & drop
+dropzone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dropzone.classList.add('dragover');
+});
+dropzone.addEventListener('dragleave', () => {
+    dropzone.classList.remove('dragover');
+});
+dropzone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropzone.classList.remove('dragover');
+    if (e.dataTransfer.files.length > 0) {
+        fileInput.files = e.dataTransfer.files;
+        fileInput.dispatchEvent(new Event('change'));
+    }
+});
+</script>
+{% endblock %}

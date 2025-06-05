@@ -1,0 +1,36 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}УчебныйУчёт{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body>
+    <div class="wrapper">
+        <nav>
+            {% if user.is_authenticated %}
+                {% if user.userprofile.role == 'teacher' %}
+                    <a href="{% url 'upload' %}" class="{% if request.path == '/upload/' %}active{% endif %}">Загрузить ведомость</a>
+                    <a href="{% url 'color_settings' %}" class="{% if request.path == '/colors/' %}active{% endif %}">Настройки цвета</a>
+                {% elif user.userprofile.role == 'deputy' %}
+                    <a href="{% url 'vedomosti_list' %}" class="{% if request.path == '/vedomosti/' %}active{% endif %}">Ведомости</a>
+                    <a href="{% url 'create_teacher' %}" class="{% if request.path == '/create-teacher/' %}active{% endif %}">Создать преподавателя</a>
+                    <a href="{% url 'color_settings_ta' %}" class="{% if request.path == '/colors/ta/' %}active{% endif %}">Настройки цвета</a>
+                    <a href="{% url 'upload_teacher_assignments' %}" class="{% if request.path == '/upload_teacher_assignments/' %}active{% endif %}">Загрузить назначения</a>
+                    <a href="{% url 'generate_report' %}" class="{% if request.path == '/generate-report/' %}active{% endif %}">Сгенерировать отчет</a>
+                    <a href="{% url 'users_list' %}" class="{% if request.path == '/users/' %}active{% endif %}">Преподаватели</a>
+                {% endif %}
+                    <a href="{% url 'logout' %}">Выйти</a>
+            {% endif %}
+        </nav>
+
+        <div class="main-content">
+            <div class="content-box {% block extra_class %}{% endblock %}">
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>
